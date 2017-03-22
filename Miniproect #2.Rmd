@@ -1,0 +1,103 @@
+---
+title: 'Mini Project #2'
+author: "Cindy Lu,Lily Qian,Zixian Li"
+date: '2017-03-20'
+output: html_document
+---
+
+```{r,warning=FALSE,message=FALSE}
+#Load required packages
+library(dplyr)
+library(tidyverse)
+library(ggplot2)
+library(RColorBrewer)
+library(ggthemes)
+load("house_elections.rda")
+load("candidates.rda")
+load("committees.rda")
+load("contributions.rda")
+
+```
+
+
+```{r,warning=FALSE,message=FALSE}
+#Select certain columns
+#We only keep candidates whose election year is 2012
+#because the contribution transaction date is in 2011 and 2012 according to the contributions data table 
+#Therefore we conclude that the contributions in this data set will be most possibily directed to 2012's election or elections above 2012 
+Newcandidate <- candidates %>%
+  select(cand_id,cand_name,cand_party_affiliation,cand_election_yr,cand_state) %>%
+  filter(cand_election_yr == '2012') %>%
+  filter(cand_party_affiliation == 'REP'|cand_party_affiliation == 'DEM' )
+Newcontributions <- contributions %>%
+  select(name,transaction_amt,cand_id,state) %>%
+  group_by(cand_id) %>%
+  summarize(total_amt = sum(transaction_amt))
+#Join two data frames with candidate ID and filter out the NA value 
+Newcandidate <- left_join(Newcandidate, Newcontributions, by = 'cand_id') 
+Newcandidate <- Newcandidate %>%
+  filter(!is.na(total_amt))
+#Summarize the total amount of contribution for each party
+Pcandidate <- Newcandidate %>%
+  group_by(cand_party_affiliation) %>%
+  summarize(Party_amt = sum(total_amt))
+#Show the result with a bar graph
+myPlot1 <- ggplot(Pcandidate, aes(x = cand_party_affiliation, y = Party_amt, fill = cand_party_affiliation )) + geom_bar(stat = "identity", width = 0.3) + scale_fill_manual(values = c('blue', 'red'))
+myPlot1
+```
+
+```{r,warning = FALSE, message=FALSE}
+# Filter the replublican transaction amount received in different states
+REP_state <- Newcandidate %>%
+  filter(cand_party_affiliation == 'REP') %>%
+  group_by(cand_state) %>%
+  summarize(Rep_amt = sum(total_amt)) %>%
+  filter(!is.na(cand_state))
+# Filter the democrats transaction amount received in different states
+DEM_state <- Newcandidate %>%
+  filter(cand_party_affiliation == 'DEM') %>%
+  group_by(cand_state) %>%
+  summarize(Dem_amt = sum(total_amt))
+#Join these two data frames 
+Party_state <- REP_state%>%
+  left_join(DEM_state, by = 'cand_state')
+#In the data set there are some contributions of which the candidates who received do not indicate the states they represent 
+#For the convenience of our data analysis, we omit these rows of data   
+Party_state <- Party_state[-1,]
+#Investigate whether Democrats receive more contributions than Republicans
+Party_state <- Party_state %>%
+  mutate(comparison = Dem_amt > Rep_amt)
+
+#Wrangle the dataset to draw graph
+Party_state_tidy <- Party_state %>%
+  gather(key = "Party", value = "contributions",-cand_state) %>%
+  group_by(cand_state)
+G_Party_state_tidy <- Party_state_tidy %>%
+  filter(Party != 'comparison')
+#Draw the graph
+p <- ggplot(G_Party_state_tidy, aes(x = Party, y = contributions, fill = Party)) + geom_bar(stat = 'identity') + scale_fill_manual(values = c('blue', 'red'))+ theme(axis.text.x = element_text(angle = 70,hjust = 1))+
+  facet_wrap(~cand_state, ncol = 10)
+p
+```
+
+```{r,,warning = FALSE, message=FALSE}
+#Count how many states does Republican gets more contributions than Democrats
+Vote_Party_stateR <- Party_state %>%
+  filter(comparison == 'FALSE') %>%
+  summarize(more_state_R = n())
+#Count how many states does Republican gets less contributions than Democrats
+Vote_Party_stateD <- Party_state %>%
+  filter(comparison == 'TRUE') %>%
+  summarize(more_state_D = n())
+#Show the result
+Vote_Party_stateR$more_state_R
+Vote_Party_stateD$more_state_D
+```
+#Blog Post 
+
+#   With the data given, our group wants to find out which political party got the largest amount of contributions from committee for 2012's election. We wrangle the data and create the bar chart with ggplot. Since Democratic Party and Republican party are the two major parties that received most contributions from committee, we only compare these two parties's countribution while omitting other parties. With the bar chart, we can easily find that candidates from Democratic Party receive more contributions( ...) than candidates from Republican Party(...) did in the whole country. 
+#   We also sort the data by states, and create bar charts for individual states. These bar charts can provide a clear indiction about which political party's candidates in the certain states receive more contributions. (…) States contributes more to Democratic Party, and (…) States contribute more to Republican Party. 
+#  Because committees that are recorded in the data set include federal political action committees and party committees, campaign committees, their financial contributions to candidates from different political parties can represent their political atitudes. Their financial supports to different political parties can somehow reveal the influence a political party have both across U.S. and for each individual states. We believe that in general, during the election period, candidates from a political party with more influence will gain larger amount of financial contributions. However, the committees do not represent the voice of American people. It can only be an indictor of certain political and social power that a party holds. 
+# 	We are curious about how financial contributions relate to election result. Does the party that gain larger amount of financial support from committee eventually win the result? During 2012 U.S. Congressional election, Republican won the House(233:201); Democrats won Senate(54:45) . We are not able to give a conclusion that financial contributions from committees are directly related to the election result: the party with the largest amount of contributions did not become the dominant party in House, just as Trump spent less money than Hillary and becomes. U.S. president in 2016. 
+
+
