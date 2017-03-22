@@ -1,0 +1,103 @@
+---
+title: "Generic Lab Name"
+author: "Name"
+date: "Date of lab session"
+output: oilabs::lab_report
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+library(ggplot2)
+library(oilabs)
+library(tidyverse)
+load("C:/Users/admin/Desktop/Data Wrangling/candidates.rda")
+load("C:/Users/admin/Desktop/Data Wrangling/contributions.rda")
+load("C:/Users/admin/Desktop/Data Wrangling/house_elections.rda")
+load("C:/Users/admin/Desktop/Data Wrangling/individuals.rda")
+
+```
+
+* * *
+
+### Exercise 1: 
+
+```{r}
+
+glimpse(committees)
+glimpse(house_elections)
+
+committees <- committees %>%
+  select(cmte_id, cmte_name, cmte_state, cmte_type, cmte_party_affiliation, cand_id) %>%
+  filter(cmte_party_affiliation == "REP" | cmte_party_affiliation == "DEM")
+
+house_elections <- house_elections %>%
+  select(fec_id, candidate_name, incumbent, party, ge_winner) %>%
+  filter(party == "D" | party == "R") %>%
+  rename(cand_id = fec_id)
+
+house_elections$party[house_elections$party == "R"] <- "REP"
+house_elections$party[house_elections$party == "D"] <- "DEM"
+
+  
+```
+
+
+
+```{r}
+
+candidates <- candidates %>%
+  select(cand_id, cand_name, cand_party_affiliation, cand_election_yr, cand_office_state, cand_office, cand_office_district, cand_ici) %>%
+  filter(cand_party_affiliation == "DEM" | cand_party_affiliation == "REP")
+
+```
+
+
+
+```{r}
+
+contributions <- contributions %>%
+  filter(amndt_ind == "N", memo_cd != "X") %>%
+  select(cmte_id, entity_type, transaction_amt, other_id, cand_id)
+  
+
+```
+
+
+
+```{r}
+
+house_contributions <- house_elections %>%
+  left_join(contributions, by = "cand_id") %>%
+  group_by(cand_id, candidate_name) %>%
+  summarize(total_amt = sum(transaction_amt))
+
+View(house_contributions)
+View(house_elections)
+
+
+```
+
+```{r}
+house_elections <- house_elections %>%
+  left_join(house_contributions, by = "cand_id") %>%
+  select(-candidate_name.y) %>%
+  rename(candidate_name = candidate_name.x) %>%
+  filter(!is.na(total_amt)) %>%
+  arrange(desc(total_amt))
+
+
+```
+
+
+```{r}
+
+incumbent_plot <- ggplot(house_elections, aes(y = total_amt, x = incumbent)) + geom_boxplot(aes(color = party, fill = party))
+
+winner_plot <- ggplot(house_elections, aes(y = total_amt, x = ge_winner)) + geom_violin(aes(color = party, fill = party))
+
+incumbent_plot
+winner_plot
+
+```
+
