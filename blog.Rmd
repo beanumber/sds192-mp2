@@ -1,6 +1,6 @@
 ---
 title: "Mini-Project 2"
-author: "Your Name Here"
+author: "Yue Kuang, Alice Mungyu, Margaret Anne Smith"
 date: "March 24, 2017"
 output: html_document
 ---
@@ -14,4 +14,28 @@ load("house_elections.rda")
 load("candidates.rda")
 load("committees.rda")
 load("contributions.rda")
+
+library(dplyr)
+library(tidyverse)
+library(ggplot2)
 ```
+
+```{r}
+total_donation<- contributions%>%
+  ##matching contributions with candidate name
+  full_join(candidates, by="cand_id")%>%
+  
+  ##specifying that we wanted donations for the general election
+  filter(transaction_pgi=="G")%>%
+  
+  ##removing contributions with no corresponding candidate names
+  filter(!is.na(cand_name))%>%
+  
+  ##specifying that we wanted donations from only the 2012 election
+  filter(cand_election_yr=="2012")%>%
+  
+  ##specifying that we were only interested in donations to presidential candidates
+  filter(cand_office=="P")%>%
+  
+  ##specifying that we only wanted the Democrat and Republican candidates
+  filter((cand_party_affiliation=="DEM")|(cand_party_affiliation=="REP"))
