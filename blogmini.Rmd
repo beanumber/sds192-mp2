@@ -1,0 +1,78 @@
+---
+title: "Mini-Project 2"
+author: "Yue Kuang, Alice Mungyu, Margaret Anne Smith"
+date: "March 24, 2017"
+output: html_document
+---
+
+
+## Loading the data
+
+
+```{r, include=FALSE}
+load("house_elections.rda")
+load("candidates.rda")
+load("committees.rda")
+load("contributions.rda")
+
+library(dplyr)
+library(tidyverse)
+library(ggplot2)
+```
+
+```{r}
+total_donation<- contributions%>%
+  ##matching contributions with candidate name
+  full_join(candidates, by="cand_id")%>%
+  
+  ##specifying that we wanted donations for the general election
+  filter(transaction_pgi=="G")%>%
+  
+  ##removing contributions with no corresponding candidate names
+  filter(!is.na(cand_name))%>%
+  
+  ##specifying that we wanted donations from only the 2012 election
+  filter(cand_election_yr=="2012")%>%
+  
+  ##specifying that we were only interested in donations to presidential candidates
+  filter(cand_office=="P")%>%
+  
+  ##specifying that we only wanted the Democrat and Republican candidates
+  filter((cand_party_affiliation=="DEM")|(cand_party_affiliation=="REP"))%>%
+  
+  ##we wanted our table to contain information for the total amount of money donated from each state to the Democrat or Republican candidate
+  group_by(state, cand_party_affiliation)%>%
+  
+  ##this code calculates the values for the total amount donated
+  summarise(average=mean(transaction_amt))%>%
+  
+  ##this code allows us to show total amount donated for each party by state - each party becomes a new column
+  spread(key = cand_party_affiliation, value =average)%>%
+  
+  ##May change later gator
+  filter(state!="MD")%>%
+  filter(state!="VA")%>%
+  filter(state!="DC")
+
+```
+
+
+##Post
+
+
+```{r}
+
+smalldonation_plot<- ggplot(data=total_donation, aes(x=REP, y=DEM))+geom_text(aes(label=state),color="BLACK")+
+  scale_y_continuous(expand=c(0,0), limits=c(0,7500))+
+  scale_x_continuous(expand=c(0,0),limits=c(0,7500))
+smalldonation_plot
+
+donation_plot<-ggplot(data=total_donation,aes(x=REP, y=DEM))+geom_text(aes(label=state),color="BLACK")
+
+donation_plot
+```
+
+  
+  
+
+```
