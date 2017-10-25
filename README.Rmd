@@ -25,6 +25,9 @@ glimpse(house_elections)
 glimpse(candidates)
 glimpse(committees)
 glimpse(contributions)
+library(ggplot2)
+ggplot(house_elections, aes(x = runoff_votes, y = general_votes)) +
+  geom_line()
 ```
 
 > Make sure that the row and column counts match!

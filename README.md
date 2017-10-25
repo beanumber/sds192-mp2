@@ -105,4 +105,12 @@ glimpse(contributions)
     ## $ memo_text        <chr> "", "", "", "", "", "", "", "", "", "CHECK 23...
     ## $ sub_id           <dbl> 4.03182e+18, 4.03172e+18, 4.03172e+18, 4.0317...
 
+``` r
+library(ggplot2)
+ggplot(house_elections, aes(x = runoff_votes, y = general_votes)) +
+  geom_line()
+```
+
+![](README_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-2-1.png)
+
 > Make sure that the row and column counts match!
