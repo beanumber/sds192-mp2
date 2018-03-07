@@ -1,0 +1,11 @@
+---
+title: "Lab12.Rmd"
+author: "Julia Portocarrero"
+date: "March 7, 2018"
+output: html_document
+---
+
+```{r, messages = FALSE}
+library(tidyverse)
+```
+

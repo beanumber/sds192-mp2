@@ -1,6 +1,6 @@
 ---
 title: "Mini-Project 2"
-author: "Your Name Here"
+author: "Dasom An & Julia Portocarrero"
 date: "October 31, 2017"
 output: html_document
 ---
@@ -8,7 +8,6 @@ output: html_document
 
 ## Loading the data
 
-This project is so interesting and relevant to my life!
 
 ```{r, include=FALSE}
 load("house_elections.rda")
@@ -16,3 +15,10 @@ load("candidates.rda")
 load("committees.rda")
 load("contributions.rda")
 ```
+
+## Info about the data
+
+`Candidates` file:   https://classic.fec.gov/finance/disclosure/ftpdet.shtml#archive_lin
+-one record per candidate  
+-contains including name, party, whether the candidate is an incumbent, challenger, or involved in an open seat, address, state and district in which the candidate is running and the year of the election for which the candidate is registered, and ID
+
