@@ -8,7 +8,12 @@ output: html_document
 
 ## Loading the data
 
-This project is so interesting and relevant to my life!
+Hypothosis:
+We believe that after the Supreme Cout decision that allowed corporations to contribute to political campaigns, there was a substantial increase in committee spending, most expecially in the swing states of:
+In the West, they are: Colorado, Nevada and New Mexico.
+In the Midwest: Wisconsin and Ohio.
+In the South: Virginia, North Carolina and Florida.
+And in the Northeast: Pennsylvania and New Hampshire.
 
 ```{r, include=FALSE}
 load("house_elections.rda")
@@ -16,3 +21,13 @@ load("candidates.rda")
 load("committees.rda")
 load("contributions.rda")
 ```
+
+
+```{r}
+library(tidyverse)
+candidate_contribution_2 <- merge.data.frame(candidates, contributions, by = "cand_id", all = TRUE)
+
+Candidate_contribution_tidy_2 <- candidate_contribution_2 %>% filter(candidates %in% c("CO", "NV", "NM", "WI", "OH", "VA", "NC", "FL", "PA", "NH")) %>% filter(contributions %in% c("CO", "NV", "NM", "WI", "OH", "VA", "NC", "FL", "PA", "NH")) 
+
+```
+
