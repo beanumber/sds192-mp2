@@ -7,11 +7,6 @@ output:
     code_folding: show
 ---
 
-
-## Loading the data
-
-This project is so interesting and relevant to my life!
-
 ```{r, message=FALSE}
 library(tidyverse)
 load("house_elections.rda")
@@ -19,5 +14,6 @@ load("candidates.rda")
 load("committees.rda")
 load("contributions.rda")
 ```
+
 
 > Word count: `r wordcountaddin::word_count()`
