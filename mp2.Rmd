@@ -15,11 +15,6 @@ load("committees.rda")
 load("contributions.rda")
 ```
 
-<<<<<<< HEAD
-<<<<<<< master
-=======
-## Some basic EDA
-
 - How many candidates running for what offices?
 
 ```{r}
@@ -53,10 +48,4 @@ contributions %>%
   arrange(desc(num_contributions))
 ```
 
->>>>>>> master
-
-> Word count: `r wordcountaddin::word_count()`
-
-=======
->>>>>>> 89dcc1f5fa2669a3d09fbb4a54bb4bfa967d5bee
-> Word count: `r wordcountaddin::word_count()`
+Word count: `r wordcountaddin::word_count()`
