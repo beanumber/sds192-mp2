@@ -10,7 +10,7 @@ Mini-project 2:
 See (https://beanumber.github.io/sds192/mod_data.html) for the project instructions
 
 
-```{r, eval=TRUE}
+```{r, eval=TRUE, message=FALSE}
 library(tidyverse)
 # install.packages("fec16")
 library(fec16)
