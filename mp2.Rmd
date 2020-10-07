@@ -1,24 +1,44 @@
 ---
-title: "Mini-Project 2"
-author: "Your Name Here"
-date: "2019-03-24"
+title: "Mini-project 2"
+subtitle: "SDS 192"
+author: "Your name"
+date: "`r format(Sys.Date(), '%B %e, %Y')`"
 output: 
   html_document:
+    toc: true
+    toc_depth: 2
+    toc_float: true
+    fig_width: 7
+    fig_height: 6
+    fig_caption: true
+    theme: lumen
+    df_print: paged
     code_folding: show
 ---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  message = FALSE,
+  echo = TRUE,
+  warning = FALSE
+)
+library(tidyverse)
+library(sds192)
+```
 
 
 ## Loading the data
 
-This project is so interesting and relevant to my life!
-
 ```{r, message=FALSE}
-library(tidyverse)
-load("house_elections.rda")
-load("candidates.rda")
-load("committees.rda")
-load("contributions.rda")
+library(fec16)
 ```
+
+To get the full `contributions` table, run this:
+
+```{r, eval=FALSE}
+contributions_all <- read_all_contributions()
+```
+
 
 ## Some basic EDA
 
@@ -26,34 +46,60 @@ load("contributions.rda")
 
 ```{r}
 candidates %>%
-  group_by(cand_election_yr, cand_office, cand_office_state) %>%
+  group_by(cand_election_yr, cand_office, cand_office_st) %>%
   summarize(num_candidates = n()) %>%
+  arrange(desc(num_candidates)) %>%
   print(n = Inf)
 ```
-
-Note that this appears to be cumulative!
 
 - How many committees [by type](https://classic.fec.gov/finance/disclosure/metadata/CommitteeTypeCodes.shtml)?
 
 ```{r}
 committees %>%
-  group_by(cmte_type) %>%
-  summarize(num_committees = n(), 
-            cand_ids = sum(cand_id > "")) %>%
+  group_by(cmte_tp) %>%
+  summarize(
+    num_committees = n(), 
+    cand_ids = sum(!is.na(cand_id))
+  ) %>%
   arrange(desc(num_committees))
 ```
 
 - What types of contributions are there and where do they go?
 
+Remember that `contributions` is just a sample!
+
 ```{r}
 contributions %>%
-  group_by(entity_type) %>%
-  summarize(num_contributions = n(), 
-            total_amount = sum(transaction_amt), 
-            other_ids = sum(other_id > ""),
-            cand_ids = sum(cand_id > "")) %>%
+  group_by(entity_tp) %>%
+  summarize(
+    num_contributions = n(), 
+    total_amount = sum(transaction_amt), 
+    other_ids = sum(!is.na(other_id)),
+    cand_ids = sum(!is.na(cand_id))
+  ) %>%
   arrange(desc(num_contributions))
 ```
 
 
-> Word count: `r wordcountaddin::word_count()`
+## Word count
+
+```{r word_count, message=FALSE, echo=FALSE}
+text_stats()
+```
+
+## Standards
+
+In this assignment, we are attempting the following standards:
+
+```{r buttons, echo=FALSE}
+standard_button("markdown")
+standard_button("aesthetics")
+standard_button("wrangling")
+standard_button("context")
+standard_button("reshape")
+standard_button("relational")
+standard_button("ethics")
+standard_button("github")
+```
+
+

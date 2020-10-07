@@ -11,17 +11,16 @@ See (https://beanumber.github.io/sds192/mod_data.html) for the project instructi
 
 
 ```{r, eval=TRUE}
-load("house_elections.rda")
-load("candidates.rda")
-load("committees.rda")
-load("contributions.rda")
+library(tidyverse)
+# install.packages("fec16")
+library(fec16)
 ```
 
 Verify that your data looks like this:
 
 ```{r, eval=TRUE, message=FALSE}
 library(tidyverse)
-glimpse(house_elections)
+glimpse(results_house)
 glimpse(candidates)
 glimpse(committees)
 glimpse(contributions)
