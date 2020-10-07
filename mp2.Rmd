@@ -1,6 +1,6 @@
 ---
-title: "Mini-project 2"
-subtitle: "SDS 192"
+title: "Put a real title here"
+subtitle: "SDS 192: MP2"
 author: "Your name"
 date: "`r format(Sys.Date(), '%B %e, %Y')`"
 output: 
@@ -26,6 +26,9 @@ library(tidyverse)
 library(sds192)
 ```
 
+## Introduction
+
+What is this article about?
 
 ## Loading the data
 
@@ -41,6 +44,8 @@ contributions_all <- read_all_contributions()
 
 
 ## Some basic EDA
+
+Here are some basic examples of what you can do.
 
 - How many candidates running for what offices?
 
@@ -80,6 +85,13 @@ contributions %>%
   arrange(desc(num_contributions))
 ```
 
+## Analysis
+
+What did you discover?
+
+## Conclusion
+
+What did you learn about the 2016 federal election cycle?
 
 ## Word count
 
